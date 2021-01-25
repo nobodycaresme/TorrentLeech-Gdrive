@@ -1,14 +1,4 @@
 # (c) gautamajay52
-# 
-# the logging things
-import logging
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
-logging.getLogger("pyrogram").setLevel(logging.WARNING)
-LOGGER = logging.getLogger(__name__)
-
 
 import os
 import shutil
@@ -37,8 +27,6 @@ async def yt_playlist_downg(message, i_m_sefg, G_DRIVE):
     cmd = ["youtube-dl", "-i", "-f", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4", "-o", f"{fol_der}/%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s", f"{url}"]
     gau_tam = await asyncio.create_subprocess_exec(*cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
     gau, tam = await gau_tam.communicate()
-    LOGGER.info(gau.decode('utf-8'))
-    LOGGER.info(tam.decode('utf-8'))
     e_response = tam.decode().strip()
     ad_string_to_replace = "please report this issue on https://yt-dl.org/bug . Make sure you are using the latest version; see  https://yt-dl.org/update  on how to update. Be sure to call youtube-dl with the --verbose flag and include its complete output."
     if e_response and ad_string_to_replace in e_response:

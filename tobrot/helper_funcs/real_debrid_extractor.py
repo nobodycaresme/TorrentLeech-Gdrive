@@ -2,15 +2,6 @@
 # -*- coding: utf-8 -*-
 # (c) Shrimadhav U K
 
-# the logging things
-import logging
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
-logging.getLogger("pyrogram").setLevel(logging.WARNING)
-LOGGER = logging.getLogger(__name__)
-
 import os
 
 from tobrot import (
@@ -37,7 +28,6 @@ async def extract_it(restricted_link, custom_file_name):
             "link": restricted_link
         }
         html = await fetch(session, url_to_send, to_send_data)
-        LOGGER.info(html)
         downloadable_url = html.get("download")
         original_file_name = custom_file_name
         if original_file_name is None:

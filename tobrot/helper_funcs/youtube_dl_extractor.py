@@ -2,22 +2,11 @@
 # -*- coding: utf-8 -*-
 # (c) Shrimadhav U K
 
-# the logging things
-import logging
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
-logging.getLogger("pyrogram").setLevel(logging.WARNING)
-LOGGER = logging.getLogger(__name__)
-
-
 import asyncio
 from tobrot.helper_funcs.display_progress import humanbytes
 import json
 import os
 import pyrogram.types as pyrogram
-logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
 from tobrot import (
     DEF_THUMB_NAIL_VID_S
@@ -43,7 +32,6 @@ async def extract_youtube_dl_formats(url, cf_name, yt_dl_user_name, yt_dl_pass_w
         command_to_exec.append("--password")
         command_to_exec.append(yt_dl_pass_word)
 
-    LOGGER.info(command_to_exec)
     process = await asyncio.create_subprocess_exec(
         *command_to_exec,
         # stdout must a pipe to be accessible as process.stdout
@@ -53,18 +41,14 @@ async def extract_youtube_dl_formats(url, cf_name, yt_dl_user_name, yt_dl_pass_w
     # Wait for the subprocess to finish
     stdout, stderr = await process.communicate()
     e_response = stderr.decode().strip()
-    LOGGER.info(e_response)
     t_response = stdout.decode().strip()
-    LOGGER.info(t_response)
     # https://github.com/rg3/youtube-dl/issues/2630#issuecomment-38635239
     if e_response:
-        # logger.warn("Status : FAIL", exc.returncode, exc.output)
         error_message = e_response.replace(
             "please report this issue on https://yt-dl.org/bug . Make sure you are using the latest version; see  https://yt-dl.org/update  on how to update. Be sure to call youtube-dl with the --verbose flag and include its complete output.", ""
         )
         return None, error_message, None
     if t_response:
-        # logger.info(t_response)
         x_reponse = t_response
         response_json = []
         if "\n" in x_reponse:
@@ -77,7 +61,6 @@ async def extract_youtube_dl_formats(url, cf_name, yt_dl_user_name, yt_dl_pass_w
             "/" + str("ytdleech") + ".json"
         with open(save_ytdl_json_path, "w", encoding="utf8") as outfile:
             json.dump(response_json, outfile, ensure_ascii=False)
-        # logger.info(response_json)
         inline_keyboard = []
         #
         thumb_image = DEF_THUMB_NAIL_VID_S
@@ -157,10 +140,8 @@ async def extract_youtube_dl_formats(url, cf_name, yt_dl_user_name, yt_dl_pass_w
                 ])
             break
         reply_markup = pyrogram.InlineKeyboardMarkup(inline_keyboard)
-        # LOGGER.info(reply_markup)
         if cf_name:
             succss_mesg = f"""Select the desired format | {cf_name}"""
         else:
             succss_mesg = f"""Select the desired format"""
-        LOGGER.info(succss_mesg)
         return thumb_image, succss_mesg, reply_markup

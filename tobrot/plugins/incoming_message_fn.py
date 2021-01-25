@@ -2,16 +2,6 @@
 # -*- coding: utf-8 -*-
 # (c) Shrimadhav U K | gautamajay52 | Akshay C
 
-# the logging things
-import logging
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
-logging.getLogger("pyrogram").setLevel(logging.WARNING)
-LOGGER = logging.getLogger(__name__)
-
-
 import os
 import requests
 
@@ -42,7 +32,6 @@ async def incoming_purge_message_f(client, message):
         # Show All Downloads
         downloads = aria_i_p.get_downloads()
         for download in downloads:
-            LOGGER.info(download.remove(force=True))
     await i_m_sefg2.delete()
 
 async def incoming_message_f(client, message):
@@ -65,13 +54,10 @@ async def incoming_message_f(client, message):
             is_untar = True
     # get link from the incoming message
     dl_url, cf_name, _, _ = await extract_link(message.reply_to_message, "LEECH")
-    LOGGER.info(dl_url)
-    LOGGER.info(cf_name)
     if dl_url is not None:
         await i_m_sefg.edit_text("extracting links")
         # start the aria2c daemon
         aria_i_p = await aria_start()
-        LOGGER.info(aria_i_p)
         current_user_id = message.from_user.id
         # create an unique directory
         new_download_location = os.path.join(
@@ -125,13 +111,10 @@ async def incoming_gdrive_message_f(client, message):
             is_untar = True
     # get link from the incoming message
     dl_url, cf_name, _, _ = await extract_link(message.reply_to_message, "GLEECH")
-    LOGGER.info(dl_url)
-    LOGGER.info(cf_name)
     if dl_url is not None:
         await i_m_sefg.edit_text("extracting links")
         # start the aria2c daemon
         aria_i_p = await aria_start()
-        LOGGER.info(aria_i_p)
         current_user_id = message.from_user.id
         # create an unique directory
         new_download_location = os.path.join(
@@ -168,17 +151,14 @@ async def incoming_youtube_dl_f(client, message):
     g_id = message.from_user.id
     credit = await message.reply_text(f"💀 Downloading for you <a href='tg://user?id={g_id}'>🤕</a>", parse_mode="html")
     i_m_sefg = await message.reply_text("processing", quote=True)
-    # LOGGER.info(message)
     # extract link from message
     dl_url, cf_name, yt_dl_user_name, yt_dl_pass_word = await extract_link(
         message.reply_to_message, "YTDL"
     )
-    LOGGER.info(dl_url)
     #if len(message.command) > 1:
         #if message.command[1] == "gdrive":
             #with open('blame_my_knowledge.txt', 'w+') as gg:
                 #gg.write("I am noob and don't know what to do that's why I have did this")
-    LOGGER.info(cf_name)
     if dl_url is not None:
         await i_m_sefg.edit_text("extracting links")
         current_user_id = message.from_user.id
@@ -239,12 +219,9 @@ async def g_clonee(client, message):
     """ /gclone command """
     g_id = message.from_user.id
     if message.reply_to_message is not None:
-        LOGGER.info(message.reply_to_message.text)
         gclone = CloneHelper(message)
         gclone.config()
         a, h = gclone.get_id()
-        LOGGER.info(a)
-        LOGGER.info(h)
         await gclone.gcl()
         await gclone.link_gen_size()
     else:
@@ -268,7 +245,6 @@ async def rename_tg_file(client, message):
             usr_id,
             response
         )
-        LOGGER.info(final_response)
         try:
             message_to_send = ""
             for key_f_res_se in final_response:
@@ -294,7 +270,6 @@ async def rename_tg_file(client, message):
                 disable_web_page_preview=True
             )
         except Exception as pe:
-            LOGGER.info(pe)
 
     else:
         await message.reply_text("Provide new name of the file with extension 😐")

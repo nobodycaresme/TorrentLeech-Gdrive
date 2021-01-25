@@ -2,15 +2,6 @@
 # -*- coding: utf-8 -*-
 # (c) Shrimadhav U K | gautamajay52
 
-# the logging things
-import logging
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
-logging.getLogger("pyrogram").setLevel(logging.WARNING)
-LOGGER = logging.getLogger(__name__)
-
 import asyncio
 import os
 import time
@@ -22,8 +13,7 @@ import io
 from tobrot import (
     MAX_MESSAGE_LENGTH,
     AUTH_CHANNEL,
-    BOT_START_TIME,
-    LOGGER
+    BOT_START_TIME
 )
 
 
@@ -79,7 +69,6 @@ async def status_message_f(client, message):
             msg += f"<code>/cancel {current_gid}</code>"
             msg += " | "
             msg += "\n\n"
-        #LOGGER.info(msg)
 
         if msg == "":
             msg = "🤷‍♂️ No Active, Queued or Paused TORRENTs"
@@ -94,10 +83,8 @@ async def status_message_f(client, message):
         f"<b>Total disk space</b>: <code>{total}</code>\n" \
         f"<b>Used</b>: <code>{used}</code>\n" \
         f"<b>Free</b>: <code>{free}</code>\n"
-    #LOGGER.info(ms_g)
 
     msg = ms_g + "\n" + msg
-    LOGGER.info(msg)
     if len(msg) > MAX_MESSAGE_LENGTH:
         with io.BytesIO(str.encode(msg)) as out_file:
             out_file.name = "status.text"
@@ -114,11 +101,8 @@ async def cancel_message_f(client, message):
         i_m_s_e_g = await message.reply_text("checking..?", quote=True)
         aria_i_p = await aria_start()
         g_id = message.command[1].strip()
-        LOGGER.info(g_id)
         try:
             downloads = aria_i_p.get_download(g_id)
-            LOGGER.info(downloads)
-            LOGGER.info(downloads.remove(force=True, files=True))
             await i_m_s_e_g.edit_text(
                 "Leech Cancelled"
             )
@@ -185,7 +169,6 @@ async def upload_document_f(client, message):
                 message.from_user.id,
                 {}
             )
-            LOGGER.info(recvd_response)
     await imsegd.delete()
 '''
 async def eval_message_f(client, message):

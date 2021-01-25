@@ -2,16 +2,8 @@
 # -*- coding: utf-8 -*-
 # (c) Shrimadhav U K | gautamajay52
 
-# the logging things
-import logging
 import sys
 sys.setrecursionlimit(10**4)
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
-logging.getLogger("pyrogram").setLevel(logging.WARNING)
-LOGGER = logging.getLogger(__name__)
 
 import aria2p
 import asyncio
@@ -57,7 +49,6 @@ async def aria_start():
     aria2_daemon_start_cmd.append("--split=10")
     aria2_daemon_start_cmd.append(f"--bt-stop-timeout={MAX_TIME_TO_WAIT_FOR_TORRENTS_TO_START}")
     #
-    LOGGER.info(aria2_daemon_start_cmd)
     #
     process = await asyncio.create_subprocess_exec(
         *aria2_daemon_start_cmd,
@@ -65,8 +56,6 @@ async def aria_start():
         stderr=asyncio.subprocess.PIPE
     )
     stdout, stderr = await process.communicate()
-    LOGGER.info(stdout)
-    LOGGER.info(stderr)
     aria2 = aria2p.API(
         aria2p.Client(
             host="http://localhost",
@@ -153,7 +142,6 @@ async def call_apropriate_function(
         sagtus, err_message = add_url(aria_instance, incoming_link, c_file_name)
     if not sagtus:
         return sagtus, err_message
-    LOGGER.info(err_message)
     # https://stackoverflow.com/a/58213653/4723940
     await check_progress_for_dl(
         aria_instance,
@@ -210,7 +198,6 @@ async def call_apropriate_function(
                 to_upload_file = f"{CUSTOM_FILE_NAME}{to_upload_file}"
             else:
                 for root, dirs, files in os.walk(to_upload_file):
-                    LOGGER.info(files)
                     for org in files:
                         p_name = f"{root}/{org}"
                         n_name = f"{root}/{CUSTOM_FILE_NAME}{org}"
@@ -226,7 +213,6 @@ async def call_apropriate_function(
         to_upload_file = to_upload_file
     #
     response = {}
-    LOGGER.info(response)
     user_id = user_message.from_user.id
     if com_g:
         final_response = await upload_to_tg(
@@ -284,7 +270,6 @@ async def call_apropriate_function_g(
         sagtus, err_message = add_url(aria_instance, incoming_link, c_file_name)
     if not sagtus:
         return sagtus, err_message
-    LOGGER.info(err_message)
     # https://stackoverflow.com/a/58213653/4723940
     await check_progress_for_dl(
         aria_instance,
@@ -341,7 +326,6 @@ async def call_apropriate_function_g(
                 to_upload_file = f"{CUSTOM_FILE_NAME}{to_upload_file}"
             else:
                 for root, dirs, files in os.walk(to_upload_file):
-                    LOGGER.info(files)
                     for org in files:
                         p_name = f"{root}/{org}"
                         n_name = f"{root}/{CUSTOM_FILE_NAME}{org}"
@@ -357,9 +341,7 @@ async def call_apropriate_function_g(
         to_upload_file = to_upload_file
     #
     response = {}
-    LOGGER.info(response)
     user_id = user_message.from_user.id
-    LOGGER.info(user_id)
     if com_gau:
         final_response = await upload_to_gdrive(
             to_upload_file,
@@ -418,29 +400,24 @@ async def check_progress_for_dl(aria2, gid, event, previous_message):
                         await event.edit(msg, reply_markup=reply_markup)
                         previous_message = msg
                     else:
-                        LOGGER.info(f"Cancelling downloading of {file.name} may be due to slow torrent")
                         await event.edit(f"Download cancelled :\n<code>{file.name}</code>\n\n #MetaDataError")
                         file.remove(force=True, files=True)
                         return False
             else:
                 msg = file.error_message
-                LOGGER.info(msg)
                 await asyncio.sleep(EDIT_SLEEP_TIME_OUT)
                 await event.edit(f"`{msg}`")
                 return False
             await asyncio.sleep(EDIT_SLEEP_TIME_OUT)
             await check_progress_for_dl(aria2, gid, event, previous_message)
         else:
-            LOGGER.info(f"Downloaded Successfully: `{file.name} ({file.total_length_string()})` 🤒")
             await asyncio.sleep(EDIT_SLEEP_TIME_OUT)
             await event.edit(f"Downloaded Successfully: `{file.name} ({file.total_length_string()})` 🤒")
             return True
     except aria2p.client.ClientException:
         await event.edit(f"Download cancelled :\n<code>{file.name} ({file.total_length_string()})</code>")
     except MessageNotModified as ep:
-        LOGGER.info(ep)
     except FloodWait as e:
-        LOGGER.info(e)
         time.sleep(e.x)
     except RecursionError:
         file.remove(force=True, files=True)
@@ -452,12 +429,10 @@ async def check_progress_for_dl(aria2, gid, event, previous_message):
         )
         return False
     except Exception as e:
-        LOGGER.info(str(e))
         if "not found" in str(e) or "'file'" in str(e):
             await event.edit(f"Download cancelled :\n<code>{file.name} ({file.total_length_string()})</code>")
             return False
         else:
-            LOGGER.info(str(e))
             await event.edit("<u>error</u> :\n<code>{}</code> \n\n#error".format(str(e)))
             return False
 # https://github.com/jaskaranSM/UniBorg/blob/6d35cf452bce1204613929d4da7530058785b6b1/stdplugins/aria.py#L136-L164
@@ -465,10 +440,8 @@ async def check_progress_for_dl(aria2, gid, event, previous_message):
 
 async def check_metadata(aria2, gid):
     file = aria2.get_download(gid)
-    LOGGER.info(file)
     if not file.followed_by_ids:
         # https://t.me/c/1213160642/496
         return None
     new_gid = file.followed_by_ids[0]
-    LOGGER.info("Changing GID " + gid + " to " + new_gid)
     return new_gid

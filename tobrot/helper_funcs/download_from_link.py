@@ -2,16 +2,6 @@
 # -*- coding: utf-8 -*-
 # (c) Shrimadhav U K
 
-# the logging things
-import logging
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
-logging.getLogger("pyrogram").setLevel(logging.WARNING)
-LOGGER = logging.getLogger(__name__)
-
-
 import asyncio
 import time
 
@@ -43,9 +33,7 @@ async def request_download(url, file_name, r_user_id):
     # Wait for the subprocess to finish
     stdout, stderr = await process.communicate()
     e_response = stderr.decode().strip()
-    # logger.info(e_response)
     t_response = stdout.decode().strip()
-    # logger.info(t_response)
     final_m_r = e_response + "\n\n\n" + t_response
     if os.path.exists(local_file_path):
         return True, local_file_path

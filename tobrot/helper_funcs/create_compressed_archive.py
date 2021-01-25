@@ -2,14 +2,6 @@
 # -*- coding: utf-8 -*-
 # (c) Shrimadhav U K | gautamajay52
 
-# the logging things
-import logging
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-LOGGER = logging.getLogger(__name__)
-
 import asyncio
 import os
 import shutil
@@ -68,8 +60,6 @@ async def unzip_me(input_directory):
         ga_utam = await asyncio.create_subprocess_exec(*g_cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
         # Wait for the subprocess to finish
         gau, tam = await ga_utam.communicate()
-        LOGGER.info(gau)
-        LOGGER.info(tam)
         #e_response = stderr.decode().strip()
         #t_response = stdout.decode().strip()
         if os.path.exists(uncompressed_file_name):
@@ -93,8 +83,6 @@ async def untar_me(input_directory):
         bc_kanger = await asyncio.create_subprocess_exec(*g_cmd_t, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
         # Wait for the subprocess to finish
         mc, kanger = await bc_kanger.communicate()
-        LOGGER.info(mc)
-        LOGGER.info(kanger)
         #e_response = stderr.decode().strip()
         #t_response = stdout.decode().strip()
         if os.path.exists(uncompressed_file_name):
@@ -103,7 +91,6 @@ async def untar_me(input_directory):
             except:
                 pass
             return_name = uncompressed_file_name
-            LOGGER.info(return_name)
     return return_name
 #
 async def unrar_me(input_directory):
@@ -118,8 +105,6 @@ async def unrar_me(input_directory):
         jai_hind = await asyncio.create_subprocess_exec(*gau_tam_r, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
         # Wait for the subprocess to finish
         jai, hind = await jai_hind.communicate()
-        LOGGER.info(jai)
-        LOGGER.info(hind)
         #e_response = stderr.decode().strip()
         #t_response = stdout.decode().strip()
         if os.path.exists(uncompressed_file_name):
@@ -128,5 +113,4 @@ async def unrar_me(input_directory):
             except:
                 pass
             return_name = uncompressed_file_name
-            LOGGER.info(return_name)
     return return_name

@@ -2,12 +2,6 @@
 # -*- coding: utf-8 -*-
 # (c) Shrimadhav U K | gautamjay52
 
-# the logging things
-import logging
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-LOGGER = logging.getLogger(__name__)
-
 import asyncio
 import json
 import math
@@ -23,16 +17,13 @@ from tobrot import (
 )
 
 import pyrogram
-logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
 from tobrot.helper_funcs.upload_to_tg import upload_to_tg, upload_to_gdrive
 
 
 async def youtube_dl_call_back(bot, update):
-    LOGGER.info(update)
     cb_data = update.data
     get_cf_name = update.message.caption
-    #LOGGER.info(get_cf_name)
     cf_name = ""
     if "|" in get_cf_name:
         cf_name = get_cf_name.split("|", maxsplit=1)[1]
@@ -82,14 +73,11 @@ async def youtube_dl_call_back(bot, update):
     #
     response_json = response_json[0]
     # TODO: temporary limitations
-    # LOGGER.info(response_json)
     #
     youtube_dl_url = response_json.get("webpage_url")
-    LOGGER.info(youtube_dl_url)
     #
     custom_file_name = "%(title)s.%(ext)s"
     # https://superuser.com/a/994060
-    LOGGER.info(custom_file_name)
     #
     await update.message.edit_caption(
         caption="trying to download"
@@ -106,9 +94,7 @@ async def youtube_dl_call_back(bot, update):
     if not os.path.isdir(tmp_directory_for_each_user):
         os.makedirs(tmp_directory_for_each_user)
     download_directory = tmp_directory_for_each_user
-    LOGGER.info(download_directory)
     download_directory = os.path.join(tmp_directory_for_each_user, custom_file_name)
-    LOGGER.info(download_directory)
     command_to_exec = []
     if tg_send_type == "audio":
         command_to_exec = [
@@ -151,7 +137,6 @@ async def youtube_dl_call_back(bot, update):
     if "hotstar" in youtube_dl_url:
         command_to_exec.append("--geo-bypass-country")
         command_to_exec.append("IN")
-    LOGGER.info(command_to_exec)
     start = datetime.now()
     process = await asyncio.create_subprocess_exec(
         *command_to_exec,
@@ -163,8 +148,6 @@ async def youtube_dl_call_back(bot, update):
     stdout, stderr = await process.communicate()
     e_response = stderr.decode().strip()
     t_response = stdout.decode().strip()
-    # LOGGER.info(e_response)
-    # LOGGER.info(t_response)
     ad_string_to_replace = "please report this issue on https://yt-dl.org/bug . Make sure you are using the latest version; see  https://yt-dl.org/update  on how to update. Be sure to call youtube-dl with the --verbose flag and include its complete output."
     if e_response and ad_string_to_replace in e_response:
         error_message = e_response.replace(ad_string_to_replace, "")
@@ -173,7 +156,6 @@ async def youtube_dl_call_back(bot, update):
         )
         return False, None
     if t_response:
-        # LOGGER.info(t_response)
         # os.remove(save_ytdl_json_path)
         end_one = datetime.now()
         time_taken_for_download = (end_one -start).seconds
@@ -184,21 +166,15 @@ async def youtube_dl_call_back(bot, update):
         )
         user_id = update.from_user.id
         #
-        LOGGER.info(tmp_directory_for_each_user)
         for a, b, c in os.walk(tmp_directory_for_each_user):
-            LOGGER.info(a)
             for d in c:
                 e = os.path.join(a, d)
-                LOGGER.info(e)
                 gaut_am = os.path.basename(e)
-                LOGGER.info(gaut_am)
                 fi_le = e
                 if cf_name:
                     fi_le = os.path.join(a, cf_name)
-                    LOGGER.info(fi_le)
                     os.rename(e, fi_le)
                     gaut_am = os.path.basename(fi_le)
-                    LOGGER.info(gaut_am)
                 
         G_DRIVE = False
         txt = update.message.reply_to_message.text
@@ -211,8 +187,6 @@ async def youtube_dl_call_back(bot, update):
         if G_DRIVE:
             liop = subprocess.Popen(["mv", f'{fi_le}', "/app/"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             out, err = liop.communicate()
-            LOGGER.info(out)
-            LOGGER.info(err)
             final_response = await upload_to_gdrive(
                 gaut_am,
                 update.message,
@@ -237,7 +211,6 @@ async def youtube_dl_call_back(bot, update):
             True
         )
         '''
-        LOGGER.info(final_response)
         #
         try:
             shutil.rmtree(tmp_directory_for_each_user)

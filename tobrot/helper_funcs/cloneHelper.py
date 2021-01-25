@@ -11,15 +11,6 @@ import re
 import pyrogram.types as pyrogram
 import requests
 
-import logging
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
-logging.getLogger("pyrogram").setLevel(logging.WARNING)
-logging.getLogger("urllib3").setLevel(logging.WARNING)
-LOGGER = logging.getLogger(__name__)
-
 from tobrot import (
     TG_MAX_FILE_SIZE,
     EDIT_SLEEP_TIME_OUT,
@@ -55,16 +46,12 @@ class CloneHelper:
     def get_id(self):
         mes = self.mess
         txt= mes.reply_to_message.text
-        LOGGER.info(txt)
         mess = txt.split(" ", maxsplit=1)
         if len(mess) == 2:
             self.g_id = mess[0]
-            LOGGER.info(self.g_id)
             self.name = mess[1]
-            LOGGER.info(self.name)
         else:
             self.g_id = mess[0]
-            LOGGER.info(self.g_id)
             self.name = ""
         return self.g_id, self.name
         
@@ -82,7 +69,6 @@ class CloneHelper:
                 _drive = "folderba"
                 _ui = "/"
             g_name = re.escape(self.name)
-            LOGGER.info(g_name)
             destination = f'{DESTINATION_FOLDER}'
             
             with open(
@@ -104,26 +90,20 @@ class CloneHelper:
                 f"{_flag}",
                 f'{self.dname}:{destination}'
             ]
-            LOGGER.info(g_a_u)
             gau_tam = await asyncio.create_subprocess_exec(
                 *g_a_u,
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE
             )
             gau, tam = await gau_tam.communicate()
-            LOGGER.info(gau)
             gautam = gau.decode("utf-8")
-            LOGGER.info(gautam)
-            LOGGER.info(tam.decode('utf-8'))
             
             if _drive == "folderba":
                 gautii = f"https://drive.google.com/folderview?id={gautam}"
             else:
                 gautii = f"https://drive.google.com/file/d/{gautam}/view?usp=drivesdk"
                 
-            LOGGER.info(gautii)
             gau_link = re.search("(?P<url>https?://[^\s]+)", gautii).group("url")
-            LOGGER.info(gau_link)
             button = []
             button.append(
                 [
@@ -139,7 +119,6 @@ class CloneHelper:
                 else:
                     indexurl = f"{INDEX_LINK}/{self.name}/"
                 tam_link = requests.utils.requote_uri(indexurl)
-                LOGGER.info(tam_link)
                 button.append([pyrogram.InlineKeyboardButton(text="ℹ️ IndexUrl ℹ️", url=f"{tam_link}")])
             button_markup = pyrogram.InlineKeyboardMarkup(button)
             msg = await self.lsg.edit_text(
@@ -154,7 +133,6 @@ class CloneHelper:
                 '--config=rclone.conf',
                 f'{self.dname}:{destination}/{self.name}'
             ]
-            LOGGER.info(g_cmd)
             gaut_am = await asyncio.create_subprocess_exec(
                 *g_cmd,
                 stdout=asyncio.subprocess.PIPE,
@@ -162,8 +140,6 @@ class CloneHelper:
             )
             gaut, am = await gaut_am.communicate()
             g_autam = gaut.decode("utf-8")
-            LOGGER.info(g_autam)
-            LOGGER.info(am.decode('utf-8'))
             await asyncio.sleep(EDIT_SLEEP_TIME_OUT)
             await msg.edit_text(
                 f"🤖: {_up} cloned successfully in your Cloud <a href='tg://user?id={self.u_id}'>🤒</a>\
@@ -187,7 +163,6 @@ class CloneHelper:
             "--transfers=16",
             "--checkers=20"
         ]
-        LOGGER.info(cmd)
         pro = await asyncio.create_subprocess_exec(
             *cmd,
             stdout=asyncio.subprocess.PIPE,
@@ -195,14 +170,10 @@ class CloneHelper:
         )
         p, e = await pro.communicate()
         self.out = p
-        LOGGER.info(self.out)
         err = e.decode()
-        LOGGER.info(err)
-        LOGGER.info(self.out.decode())
 
         if self.name == "":
             reg_f = "INFO(.*)(:)(.*)(:) (Copied)"
             file_n = re.findall(reg_f, err)
-            LOGGER.info(file_n[0][2].strip())
             self.name = file_n[0][2].strip()
             self.filee = self.name

@@ -4,14 +4,12 @@
 
 import os
 import time
-import logging
 
 # the secret configuration specific things
 if bool(os.environ.get("ENV", False)):
     from tobrot.sample_config import Config
 else:
     from tobrot.config import Config
-from logging.handlers import RotatingFileHandler
 
 # TODO: is there a better way?
 TG_BOT_TOKEN = Config.TG_BOT_TOKEN
@@ -61,21 +59,3 @@ SP_LIT_ALGO_RITH_M = Config.SP_LIT_ALGO_RITH_M
 if os.path.exists("TorrentLeech-Gdrive.txt"):
     with open("Torrentleech-Gdrive.txt", "r+") as f_d:
         f_d.truncate(0)
-
-# the logging things
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    datefmt="%d-%b-%y %H:%M:%S",
-    handlers=[
-        RotatingFileHandler(
-            "Torrentleech-Gdrive.txt",
-            maxBytes=FREE_USER_MAX_FILE_SIZE,
-            backupCount=10
-        ),
-        logging.StreamHandler()
-    ]
-)
-logging.getLogger("pyrogram").setLevel(logging.WARNING)
-logging.getLogger("urllib3").setLevel(logging.WARNING)
-LOGGER = logging.getLogger(__name__)

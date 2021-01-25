@@ -2,15 +2,6 @@
 # -*- coding: utf-8 -*-
 # (c) Shrimadhav U K | gautamajay52
 
-# the logging things
-import logging
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
-logging.getLogger("pyrogram").setLevel(logging.WARNING)
-LOGGER = logging.getLogger(__name__)
-
 import asyncio
 import pyrogram.types as pyrogram
 import os
@@ -60,7 +51,6 @@ async def upload_to_tg(
     dict_contatining_uploaded_files,
     edit_media=False
 ):
-    LOGGER.info(local_file_name)
     base_file_name = os.path.basename(local_file_name)
     caption_str = ""
     caption_str += "<code>"
@@ -76,7 +66,6 @@ async def upload_to_tg(
         directory_contents = os.listdir(local_file_name)
         directory_contents.sort()
         # number_of_files = len(directory_contents)
-        LOGGER.info(directory_contents)
         new_m_esg = message
         if not message.photo:
             new_m_esg = await message.reply_text(
@@ -95,7 +84,6 @@ async def upload_to_tg(
             )
     else:
         if os.path.getsize(local_file_name) > TG_MAX_FILE_SIZE:
-            LOGGER.info("TODO")
             d_f_s = humanbytes(os.path.getsize(local_file_name))
             i_m_s_g = await message.reply_text(
                 "Telegram does not support uploading this file.\n"
@@ -106,7 +94,6 @@ async def upload_to_tg(
             totlaa_sleif = os.listdir(splitted_dir)
             totlaa_sleif.sort()
             number_of_files = len(totlaa_sleif)
-            LOGGER.info(totlaa_sleif)
             ba_se_file_name = os.path.basename(local_file_name)
             await i_m_s_g.edit_text(
                 f"Detected File Size: {d_f_s} 😡\n"
@@ -146,17 +133,12 @@ async def upload_to_gdrive(file_upload, message, messa_ge, g_id):
         with open("rclone.conf", "r+") as file:
             con = file.read()
             gUP = re.findall("\[(.*)\]", con)[0]
-            LOGGER.info(gUP)
     destination = f'{DESTINATION_FOLDER}'
     if os.path.isfile(file_upload):
         g_au = ['rclone', 'copy', '--config=./rclone.conf', f'./{file_upload}', f'{gUP}:{destination}', '-v']
-        LOGGER.info(g_au)
         tmp = await asyncio.create_subprocess_exec(*g_au, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
         pro, cess = await tmp.communicate()
-        LOGGER.info(pro.decode('utf-8'))
-        LOGGER.info(cess.decode('utf-8'))
         gk_file = re.escape(file_upload)
-        LOGGER.info(gk_file)
         with open('filter.txt', 'w+', encoding = 'utf-8') as filter:
             print(f"+ {gk_file}\n- *", file=filter)
             
@@ -165,19 +147,15 @@ async def upload_to_gdrive(file_upload, message, messa_ge, g_id):
         #os.remove("filter.txt")
         gau, tam = await gau_tam.communicate()
         gautam = gau.decode("utf-8")
-        LOGGER.info(tam.decode('utf-8'))
         #os.remove("filter.txt")
         gauti = f"https://drive.google.com/file/d/{gautam}/view?usp=drivesdk"
         gau_link = re.search("(?P<url>https?://[^\s]+)", gauti).group("url")
-        LOGGER.info(gau_link)
         gjay = size(os.path.getsize(file_upload))
-        LOGGER.info(gjay)
         button = []
         button.append([pyrogram.InlineKeyboardButton(text="☁️ CloudUrl ☁️", url=f"{gau_link}")])
         if INDEX_LINK:
             indexurl = f"{INDEX_LINK}/{file_upload}"
             tam_link = requests.utils.requote_uri(indexurl)
-            LOGGER.info(tam_link)
             button.append([pyrogram.InlineKeyboardButton(text="ℹ️ IndexUrl ℹ️", url=f"{tam_link}")])
         button_markup = pyrogram.InlineKeyboardMarkup(button)
         await asyncio.sleep(EDIT_SLEEP_TIME_OUT)
@@ -186,15 +164,10 @@ async def upload_to_gdrive(file_upload, message, messa_ge, g_id):
         await del_it.delete()
     else:
         tt= os.path.join(destination, file_upload)
-        LOGGER.info(tt)
         t_am = ['rclone', 'copy', '--config=./rclone.conf', f'./{file_upload}', f'{gUP}:{tt}', '-v']
-        LOGGER.info(t_am)
         tmp = await asyncio.create_subprocess_exec(*t_am, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
         pro, cess = await tmp.communicate()
-        LOGGER.info(pro.decode('utf-8'))
-        LOGGER.info(cess.decode('utf-8'))
         g_file = re.escape(file_upload)
-        LOGGER.info(g_file)
         with open('filter1.txt', 'w+', encoding = 'utf-8') as filter1:
             print(f"+ {g_file}/\n- *", file=filter1)
             
@@ -203,20 +176,15 @@ async def upload_to_gdrive(file_upload, message, messa_ge, g_id):
         #os.remove("filter1.txt")
         gau, tam = await gau_tam.communicate()
         gautam = gau.decode("utf-8")
-        LOGGER.info(gautam)
-        LOGGER.info(tam.decode('utf-8'))
         #os.remove("filter1.txt")
         gautii = f"https://drive.google.com/folderview?id={gautam}"
         gau_link = re.search("(?P<url>https?://[^\s]+)", gautii).group("url")
-        LOGGER.info(gau_link)
         gjay = size(getFolderSize(file_upload))
-        LOGGER.info(gjay)
         button = []
         button.append([pyrogram.InlineKeyboardButton(text="☁️ CloudUrl ☁️", url=f"{gau_link}")])
         if INDEX_LINK:
             indexurl = f"{INDEX_LINK}/{file_upload}/"
             tam_link = requests.utils.requote_uri(indexurl)
-            LOGGER.info(tam_link)
             button.append([pyrogram.InlineKeyboardButton(text="ℹ️ IndexUrl ℹ️", url=f"{tam_link}")])
         button_markup = pyrogram.InlineKeyboardMarkup(button)
         await asyncio.sleep(EDIT_SLEEP_TIME_OUT)
@@ -230,7 +198,6 @@ async def upload_to_gdrive(file_upload, message, messa_ge, g_id):
 async def upload_single_file(message, local_file_name, caption_str, from_user, edit_media):
     await asyncio.sleep(EDIT_SLEEP_TIME_OUT)
     local_file_name = str(Path(local_file_name).resolve())
-    LOGGER.info(local_file_name)
     sent_message = None
     start_time = time.time()
     #
@@ -239,7 +206,6 @@ async def upload_single_file(message, local_file_name, caption_str, from_user, e
         "thumbnails",
         str(from_user) + ".jpg"
     )
-    LOGGER.info(thumbnail_location)
     #
     if UPLOAD_AS_DOC.upper() == 'TRUE':
         thumb = None
@@ -454,12 +420,11 @@ async def upload_single_file(message, local_file_name, caption_str, from_user, e
                 if thumb is not None:
                     os.remove(thumb)
         except MessageNotModified as oY:
-            LOGGER.info(oY)
+        	print(oY)
+        	pass
         except FloodWait as g:
-            LOGGER.info(g)
             time.sleep(g.x)
         except Exception as e:
-            LOGGER.info(e)
             await message_for_progress_display.edit_text("**FAILED**\n" + str(e))
         else:
             if message.message_id != message_for_progress_display.message_id:
