@@ -31,7 +31,6 @@ async def incoming_purge_message_f(client, message):
         aria_i_p = await aria_start()
         # Show All Downloads
         downloads = aria_i_p.get_downloads()
-        for download in downloads:
     await i_m_sefg2.delete()
 
 async def incoming_message_f(client, message):
