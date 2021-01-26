@@ -60,6 +60,7 @@ async def progress_for_pyrogram(
                     )
                 )
         except Exception as ou:
+          pass
 
 
 def humanbytes(size):

@@ -420,8 +420,8 @@ async def upload_single_file(message, local_file_name, caption_str, from_user, e
                 if thumb is not None:
                     os.remove(thumb)
         except MessageNotModified as oY:
-        	print(oY)
-        	pass
+            print(oY)
+            pass
         except FloodWait as g:
             time.sleep(g.x)
         except Exception as e:

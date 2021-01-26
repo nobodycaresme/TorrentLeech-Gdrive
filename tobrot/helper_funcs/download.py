@@ -37,6 +37,7 @@ async def down_load_media_f(client, message):
                 )
             )
         except Exception as g_e:
+          pass
         end_t = datetime.now()
         ms = (end_t - start_t).seconds
         await asyncio.sleep(10)
@@ -83,6 +84,7 @@ async def download_tg(client, message):
                 )
             )
         except Exception as g_e:
+          pass
         end_t = datetime.now()
         ms = (end_t - start_t).seconds
         await asyncio.sleep(5)

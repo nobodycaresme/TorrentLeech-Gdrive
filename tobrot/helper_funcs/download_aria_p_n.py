@@ -417,6 +417,7 @@ async def check_progress_for_dl(aria2, gid, event, previous_message):
     except aria2p.client.ClientException:
         await event.edit(f"Download cancelled :\n<code>{file.name} ({file.total_length_string()})</code>")
     except MessageNotModified as ep:
+      pass
     except FloodWait as e:
         time.sleep(e.x)
     except RecursionError:

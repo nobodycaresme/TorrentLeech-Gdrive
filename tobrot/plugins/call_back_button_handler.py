@@ -19,7 +19,6 @@ async def button(bot, update: CallbackQuery):
     try:
         g = await AdminCheck(bot, update.message.chat.id, update.from_user.id)
     except Exception as ee:
-		print(ee)
     	pass
     if "|" in cb_data:
         await youtube_dl_call_back(bot, update)
